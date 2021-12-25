@@ -1,9 +1,11 @@
 package com.luna.simpletodo
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Button
 import android.widget.EditText
+import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import org.apache.commons.io.FileUtils
@@ -20,6 +22,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        //remove item
         val onLongClickListener = object : TaskItemAdapter.OnLongClickListener {
             override fun onItemLongClicked(position: Int) {
                 // remove the item from the list
@@ -30,13 +33,25 @@ class MainActivity : AppCompatActivity() {
                 saveItems()
             }
         }
+        val intent = Intent(this, EditTaskActivity::class.java)
+        //editing task
+        val onClickListener = object : TaskItemAdapter.OnClickListener {
+            override fun onItemClicked(position: Int) {
+                intent.putExtra("taskName", listOfTasks[position])
+                intent.putExtra("position", position)
+                intent.also {
+                    startActivityForResult(it, 1)
+                }
+                listOfTasks[position] = intent.getStringExtra("editedTaskName").toString()
+            }
+        }
 
         loadItems() //before creating the recyclerview
 
         // Lookup the recyclerview in activity layout
         val recyclerView = findViewById<RecyclerView>(R.id.recyclerView)
         // Create adapter passing in the sample user data
-        adapter = TaskItemAdapter(listOfTasks, onLongClickListener)
+        adapter = TaskItemAdapter(listOfTasks, onLongClickListener, onClickListener)
         // Attach the adapter to the recyclerview to populate items
         recyclerView.adapter = adapter
         // Set layout manager to position the items
@@ -55,12 +70,11 @@ class MainActivity : AppCompatActivity() {
             //notify the adapter that list is updated
             adapter.notifyItemInserted(listOfTasks.size - 1) //last added item
 
-            //reset text field everytime new task is added
+            //reset text field every time new task is added
             inputTextField.setText("")
-
+            Toast.makeText(this@MainActivity, "Task is added", Toast.LENGTH_SHORT).show()
             saveItems()
         }
-     //editing task
     }
 
     //save the data the user has inputted
