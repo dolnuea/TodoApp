@@ -1,5 +1,6 @@
 package com.luna.simpletodo
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -9,13 +10,24 @@ import androidx.recyclerview.widget.RecyclerView
 /**
  * bridge that displays data given on recycleview
  */
-class TaskItemAdapter (private val listOfItems: List<String>) : RecyclerView.Adapter<TaskItemAdapter.ViewHolder>() {
+class TaskItemAdapter (private val listOfItems: List<String>, val longClickListener: OnLongClickListener)
+                        : RecyclerView.Adapter<TaskItemAdapter.ViewHolder>() {
+
+    interface  OnLongClickListener {
+        // pass in position of the item that is long clicked
+        fun onItemLongClicked(position : Int)
+    }
 
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView){
         val textView : TextView
 
         init {
             textView = itemView.findViewById(android.R.id.text1)
+
+            itemView.setOnLongClickListener {
+                longClickListener.onItemLongClicked(adapterPosition)
+                true
+            }
         }
     }
 
