@@ -52,9 +52,7 @@ class MainActivity : AppCompatActivity() {
             //reset text field everytime new task is added
             inputTextField.setText("")
         }
-
-        //removing task with long click
-        //editing task
+     //editing task
     }
 
 }
