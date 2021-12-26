@@ -16,7 +16,7 @@ The following **required** functionality is completed:
 
 The following **optional** features are implemented:
 
-* [ ] User can **tap a todo item in the list and bring up an edit screen for the todo item** and then have any changes to the text reflected in the todo list
+* [X] User can **tap a todo item in the list and bring up an edit screen for the todo item** and then have any changes to the text reflected in the todo list
 
 
 ## Video Walkthrough
@@ -29,7 +29,7 @@ GIF created with [LiceCap](http://www.cockos.com/licecap/).
 
 ## Notes
 
-The challenges I faced while working on this project is, while implementing the edit functionality, I was having difficulty with "startActivityForResult" because it was being depreceated in Java, according to the error. I spent a lot of time to solve this issue.
+The challenges I faced while working on this project is, while implementing the edit functionality, I was having difficulty with "startActivityForResult" because it was being depreceated in Java, according to the error. I spent a lot of time to solve this issue, I finally found a stackoverflow post that solved my problem.
 
 ## License
 
