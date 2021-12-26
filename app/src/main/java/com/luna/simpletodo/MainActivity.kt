@@ -1,17 +1,21 @@
 package com.luna.simpletodo
 
+import android.app.Activity
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import org.apache.commons.io.FileUtils
 import java.io.File
 import java.io.IOException
 import java.nio.charset.Charset
+
 
 class MainActivity : AppCompatActivity() {
 
@@ -30,19 +34,35 @@ class MainActivity : AppCompatActivity() {
                 // notify the adapter the list has change
                 adapter.notifyDataSetChanged()
 
+                Toast.makeText(this@MainActivity, "Task is removed", Toast.LENGTH_SHORT).show()
                 saveItems()
             }
         }
+
+        val resultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                // There are no request codes
+                val data: Intent? = result.data
+                val editedTask = data?.getStringExtra("editedTaskName").toString()
+                val position = data?.getIntExtra("position", 0)
+                listOfTasks[position!!] = editedTask
+                adapter.notifyItemChanged(position)
+                saveItems()
+                Toast.makeText(this@MainActivity, "Task is updated", Toast.LENGTH_SHORT).show()
+            }
+            else {
+                Log.w("MainActivity", "Unknown call to onActivityResult");
+            }
+        }
+
         val intent = Intent(this, EditTaskActivity::class.java)
+
         //editing task
         val onClickListener = object : TaskItemAdapter.OnClickListener {
             override fun onItemClicked(position: Int) {
                 intent.putExtra("taskName", listOfTasks[position])
                 intent.putExtra("position", position)
-                intent.also {
-                    startActivityForResult(it, 1)
-                }
-                listOfTasks[position] = intent.getStringExtra("editedTaskName").toString()
+                resultLauncher.launch(intent)
             }
         }
 
@@ -88,7 +108,7 @@ class MainActivity : AppCompatActivity() {
     fun loadItems(){
         try {
             listOfTasks = FileUtils.readLines(getDataFile(), Charset.defaultCharset())
-        } catch(ioException : IOException){
+        } catch (ioException: IOException){
             ioException.printStackTrace()
         }
     }
@@ -96,7 +116,7 @@ class MainActivity : AppCompatActivity() {
     fun saveItems(){
         try {
             FileUtils.writeLines(getDataFile(), listOfTasks)
-        } catch(ioException : IOException){
+        } catch (ioException: IOException){
             ioException.printStackTrace()
         }
     }

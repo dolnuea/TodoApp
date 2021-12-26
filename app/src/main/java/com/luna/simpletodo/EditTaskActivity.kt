@@ -19,7 +19,7 @@ class EditTaskActivity : AppCompatActivity() {
         saveButton.setOnClickListener {
             val editedTask = editTaskField.text.toString()
             intent.putExtra("editedTaskName", editedTask)
-            intent.extras?.let { it1 -> intent.putExtra("position", it1.getInt("position")) }
+            intent.putExtra("position", intent.getIntExtra("position", 0))
             setResult(RESULT_OK, intent)
             finish()
         }
